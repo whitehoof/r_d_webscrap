@@ -3,13 +3,12 @@ import requests
 import time
 import random
 import html
-import json
 
 
 
 def pause():
 	pause_duration = random.uniform(1, 3) # тут буде float
-	print(f'\nPausing for {round(pause_duration,1)} seconds...\n')
+	print(f'Pausing for {round(pause_duration,1)} seconds...\n')
 	time.sleep(pause_duration)
 
 
@@ -27,7 +26,7 @@ def use_post():
 	pattern_jobs = r'jobCard_title\">(.*?)<\/h3>'
 
 	must_rewrite_jsonfile = True
-	page = 1
+	page = 1103
 	count_pages = page + 1 # це мінімально задаю по дефолту, після першого запиту знатиму реальну кількість сторінок.
 
 
@@ -68,9 +67,9 @@ def use_post():
 		response.encoding = 'utf-8' # це, здається, не допомагає.
 		
 		if response.status_code==200:
-			print('\n\nSTATUS CODE:', response.status_code, 'Все гаразд, тягнемо дані...')
+			print('\nSTATUS CODE:', response.status_code, 'Все гаразд, тягнемо дані...')
 		else:
-			print('\n\nSTATUS CODE:', response.status_code, 'Нас розкрито, топи макбук, тікай в село!')
+			print('\nSTATUS CODE:', response.status_code, 'Нас розкрито, топи макбук, тікай в село!')
 			break
 		
 
@@ -80,25 +79,21 @@ def use_post():
 		# Рахую сторінки
 		# та ставлю реальну кількість ітерацій для while loop:
 		count_pages = response.json()['settings']['pager']['total_pages']
-		print('\n\n', count_pages, 'сторінок на сайті, тягнемо сторінку', page, '...')
+		print(count_pages, 'сторінок на сайті, тягнемо сторінку', page, '...')
 		
 
 
 
-		# запис відповідей у файл jobs.json:		
-		with open('jobs.json', mode='w') as f: # запис останньої відповіді у файл.
-			f.write(f'PAGE {page}:\n\n')
-			f.write(response.text)
+		# # запис останньої відповіді у файл jobs.json:
+		# with open('jobs.json', mode='w') as f: # перезапис останньої відповіді у файл.
+		# 	f.write(f'PAGE {page}:\n\n')
+		# 	f.write(response.text)
 		
 		
 		jobs_match = re.findall(pattern_jobs, template_pretty)
 		if len(jobs_match):
-			for j in jobs_match: print(j)
 			jobs_match = [ normalize_text(j) for j in jobs_match ]
-			for j in jobs_match: print(page, j)
-
 			jobs_list = jobs_list + jobs_match
-			print(f'jobs_list now has {len(jobs_list)} jobs.')
 		else:
 			print('\n\n\n\n\n\t\tNO JOBS MATCHED!\n\n\n')
 
@@ -110,8 +105,9 @@ def use_post():
 			fj.write('\n'.join(jobs_list) + '\n')
 
 		must_rewrite_jsonfile = False # а потім дописую в кінець наступні сторінки.
+	return jobs_list
 
 
 
 if __name__ == '__main__':
-	use_post()
+	print(use_post())
