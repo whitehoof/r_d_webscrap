@@ -26,7 +26,7 @@ def use_post():
 	pattern_jobs = r'jobCard_title\">(.*?)<\/h3>'
 
 	must_rewrite_jsonfile = True
-	page = 1103
+	page = 1
 	count_pages = page + 1 # це мінімально задаю по дефолту, після першого запиту знатиму реальну кількість сторінок.
 
 
